@@ -53,6 +53,38 @@ class App extends React.Component {
       )
   }
 
+  handleRandomSubmit(evt){
+    fetch('https://api.nasa.gov/neo/rest/v1/neo/browse?api_key=DEMO_KEY')
+      .then(res => res.json())
+      .then(
+        (result) => {
+          let ids = result.near_earth_objects.map((obj) => obj.id)
+          let random_id = ids[Math.floor(Math.random() * ids.length)];
+
+          this.setState({asteroidInputVal: random_id})
+          let url = `https://api.nasa.gov/neo/rest/v1/neo/`+random_id+`?api_key=`+API_KEY
+          fetch(url)
+            .then(res => res.json())
+            .then(
+              (result) => {
+                this.setState({
+                  name: result.name,
+                  nasaJplUrl: result.nasa_jpl_url,
+                  isPotentiallyHazardousAsteroid: result.is_potentially_hazardous_asteroid,
+                  showResponse: true
+                });
+              }
+            )
+        },
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error
+          });
+        }
+      )
+  }
+
   render(){
     return (
       <div className="App">
@@ -62,7 +94,7 @@ class App extends React.Component {
                onChange={inputValue => this.changeValue(inputValue)}/>
         <button type="submit" onClick={() => this.handleSubmit()} disabled={this.state.bool}>Submit</button>
         <br />
-        <button type="submit" >Random Asteroid</button>
+        <button type="submit" onClick={() => this.handleRandomSubmit()}>Random Asteroid</button>
 
         <DisplayResult name={this.state.name} nasaJplUrl={this.state.nasaJplUrl} isPotentiallyHazardousAsteroid={this.state.isPotentiallyHazardousAsteroid} showResponse={this.state.showResponse} />
       </div>
