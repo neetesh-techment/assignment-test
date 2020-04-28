@@ -3,7 +3,6 @@ import React from 'react';
 class DisplayResult extends React.Component {
 
   render(){
-    debugger
     return(
       <div>
         <div style={this.props.showResponse ? {display: 'block'} : {display: 'none'} }>
